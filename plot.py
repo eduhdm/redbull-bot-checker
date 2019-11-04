@@ -19,21 +19,25 @@ for participantssnapshot in dbdata.values():
     while i < len(participantsdata):
         participantdata = participantsdata[i]
         participanttitle = participantdata['title']
-        if participanttitle == 'Studium':
-            if i == 0 or i == 1:
-                participanttitle = 'Studium 1'
+        if participanttitle != 'Estacionamento prioritário':
+            if participanttitle == 'Studium':
+                if i == 0 or i == 1:
+                    participanttitle = 'Studium 1'
+                else:
+                    participanttitle = 'Studium 2'
+            if participanttitle in chartdata:
+                titletovotemaxdiff[participanttitle] = max(titletovotemaxdiff[participanttitle], participantdata['vote_count'] - titletovotecount[participanttitle])
+                titletovotemindiff[participanttitle] = min(titletovotemindiff[participanttitle], participantdata['vote_count'] - titletovotecount[participanttitle])
+                chartdata[participanttitle].append(participantdata['vote_count'])
             else:
-                participanttitle = 'Studium 2'
-        if participanttitle in chartdata:
-            titletovotemaxdiff[participanttitle] = max(titletovotemaxdiff[participanttitle], participantdata['vote_count'] - titletovotecount[participanttitle])
-            titletovotemindiff[participanttitle] = min(titletovotemindiff[participanttitle], participantdata['vote_count'] - titletovotecount[participanttitle])
-            chartdata[participanttitle].append(participantdata['vote_count'])
-        else:
-            titletovotemaxdiff[participanttitle] = 0
-            titletovotemindiff[participanttitle] = 999999999
-            chartdata[participanttitle] = [participantdata['vote_count']]
-        titletovotecount[participanttitle] = participantdata['vote_count']
+                titletovotemaxdiff[participanttitle] = 0
+                titletovotemindiff[participanttitle] = 999999999
+                chartdata[participanttitle] = [participantdata['vote_count']]
+            titletovotecount[participanttitle] = participantdata['vote_count']
         i += 1
+
+# for participanttitle in titletovotecount:
+#     print(len(chartdata[participanttitle]), participanttitle)
 
 # build pandas data frame with the chart data
 chartdf = pd.DataFrame(chartdata)
@@ -78,5 +82,5 @@ for participanttitle in first10participantitles:
     print('')
     plt.plot('x', participanttitle, data=chartdf, label=participanttitle)
 
-plt.legend()
+# plt.legend()
 plt.show()
